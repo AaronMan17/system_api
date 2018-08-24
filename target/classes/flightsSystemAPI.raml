@@ -1,0 +1,56 @@
+#%RAML 1.0
+baseUri: http://localhost:8081/system_api_console/# 
+title: flightsSystemAPI
+
+types: 
+  flights: !include datatypes/flights.raml
+
+/deltaFlights:
+  get:
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: flights[]
+            examples: !include examples/flightsExample.raml
+      400:
+        body: 
+          application/json:
+            example: {
+              "message": "No flights found, try again"
+            }
+/deltaFlightsByCode:
+  get:
+    queryParameters:
+      destination:
+        type: string
+        pattern: "[A-Z]{3}"
+        displayName: Destination airport code
+        enum: [SFO, LAX, PDX, CLE, PDF]
+        required: true
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: flights[]
+            examples: !include examples/flightsExample.raml
+      400:
+        body:
+          application/json:
+            example: { 
+              "message": "No flights found, try again"
+            }
+/unitedFlights:
+  get:
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: flights[]
+            examples: !include examples/flightsExample.raml
+      400:
+        body: 
+          application/json:
+            example: {
+              "message": "No flights found, try again"
+            }      

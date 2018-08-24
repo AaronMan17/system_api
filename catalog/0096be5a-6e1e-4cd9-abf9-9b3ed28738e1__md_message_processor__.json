@@ -1,0 +1,13 @@
+{
+    "inputMessageMetadata": {
+        "flowVariables": {
+            "code": {
+                "connectorName": "Web_Service_Consumer",
+                "typeId": "findFlight"
+            }
+        }
+    },
+    "outputMessageMetadata": {},
+    "id": "0096be5a-6e1e-4cd9-abf9-9b3ed28738e1",
+    "version": "5.2.0.0"
+}

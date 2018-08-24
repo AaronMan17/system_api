@@ -1,0 +1,48 @@
+#%RAML 1.0
+baseUri: https://mocksvc.mulesoft.com/mocks/7b982f4a-77ce-472f-8c09-ec17a995b587 # 
+title: flightsSystemAPI
+
+types: 
+  flights: !include datatypes/flights.raml
+
+/allFlights:
+  get:
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: flights[]
+            examples: !include examples/flightsExample.raml
+      400:
+        body: 
+          application/json:
+            example: {
+              "message": "No flights found, try again"
+            }
+/destinationFlights:
+  get:
+    queryParameters:
+      destination:
+        type: string
+        pattern: "[A-Z]{3}"
+        displayName: Destination airport code
+        enum: [SFO, LAX, PDX, CLE, PDF]
+        required: true
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: flights[]
+            examples: !include examples/flightsExample.raml
+      400:
+        body:
+          application/json:
+            example: { 
+              "message": "No flights found, try again"
+            }
+            
+            
+
+
+
+        
