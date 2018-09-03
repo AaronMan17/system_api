@@ -3,10 +3,10 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-    <apikit:config name="flightsSystemAPI-config" raml="flightsSystemAPI.raml" consoleEnabled="false" doc:name="Router" keepRamlBaseUri="false">
-        <apikit:flow-mapping resource="/deltaFlights" action="get" flow-ref="getDeltaFlightsFlow"/>
-        <apikit:flow-mapping resource="/deltaFlightsByCode" action="get" flow-ref="getDeltaFlightsByCodeFlow"/>
-        <apikit:flow-mapping resource="/unitedFlights" action="get" flow-ref="getUnitedFlightsFlow"/>
+    <apikit:config name="flightsSystemAPI-config" raml="flightsSystemAPI.raml" consoleEnabled="true" doc:name="Router" keepRamlBaseUri="false" consolePath="console">
+        <apikit:flow-mapping resource="/deltaFlights" action="get" flow-ref="get:/deltaFlights"/>
+        <apikit:flow-mapping resource="/deltaFlightsByCode" action="get" flow-ref="get:/deltaFlightsByCode"/>
+        <apikit:flow-mapping resource="/unitedFlights" action="get" flow-ref="get:/unitedFlights"/>
 
     </apikit:config>
     <flow name="flightsSystemAPI-main">
@@ -14,23 +14,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <apikit:router config-ref="flightsSystemAPI-config" doc:name="APIkit Router" />
         <exception-strategy ref="flightsSystemAPI-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
     </flow>
-    <flow name="flightsSystemAPI-console">
-        <http:listener config-ref="global-httpListenerConfig" path="/system_api_console/*" doc:name="HTTP" />
-        <apikit:console config-ref="flightsSystemAPI-config" doc:name="APIkit Console" />
-    </flow>
 
-    <flow name="get:/deltaFlights:flightsSystemAPI-config">
-        <flow-ref name="getDeltaFlightsFlow" doc:name="getDeltaFlightsFlow"/>
-
-    </flow>
-    <flow name="get:/deltaFlightsByCode:flightsSystemAPI-config">
-        <flow-ref name="getDeltaFlightsByCodeFlow" doc:name="getDeltaFlightsByCodeFlow"/>
-
-    </flow>
-    <flow name="get:/unitedFlights:flightsSystemAPI-config">
-        <flow-ref name="getUnitedFlightsFlow" doc:name="getUnitedFlightsFlow"/>
-
-    </flow>
     <apikit:mapping-exception-strategy name="flightsSystemAPI-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />

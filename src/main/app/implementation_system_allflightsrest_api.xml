@@ -9,22 +9,10 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
     <http:request-config name="HTTP_Request_Configuration" host="mu.mulesoft-training.com" port="80" doc:name="HTTP Request Configuration"/>
-    <flow name="getUnitedFlightsFlow">
+    <flow name="get:/unitedFlights">
         <http:request config-ref="HTTP_Request_Configuration" path="/essentials/united/flights" method="GET" doc:name="HTTP" metadata:id="4b4b5bfb-2ebb-4e9f-ae37-6c7d7d054106"/>
         <dw:transform-message doc:name="Transform Message" metadata:id="9853097e-3fa6-438b-868d-3f657e6f8d9e">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/json
----
-payload.flights map ((flight , indexOfFlight) -> {
-	airline: flight.airlineName,
-	flightCode: flight.code,
-	fromAirportCode: flight.origin,
-	toAirportCode: flight.destination,
-	departureDate: flight.departureDate,
-	emptySeats: flight.emptySeats,
-	price: flight.price,
-	planeType: flight.planeType
-})]]></dw:set-payload>
+            <dw:set-payload resource="classpath:unitedFlightsTransformation.dwl"/>
         </dw:transform-message>
         <logger message="#[payload]" level="INFO" doc:name="Logger"/>
     </flow>

@@ -10,35 +10,17 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     <ws:consumer-config name="Web_Service_Consumer" wsdlLocation="http://mu.mulesoft-training.com/essentials/delta?wsdl" service="TicketServiceService" port="TicketServicePort" serviceAddress="http://mule-worker-training-u.cloudhub.io:8081/essentials/delta" doc:name="Web Service Consumer"/>
-    <flow name="getDeltaFlightsByCodeFlow">
+    <flow name="get:/deltaFlightsByCode">
         <dw:transform-message doc:name="Transform Message">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/xml
-%namespace ns0 http://soap.training.mulesoft.com/
----
-{
-	ns0#findFlight: {
-		destination: inboundProperties."http.query.params".destination
-	}
-}]]></dw:set-payload>
+            <dw:set-payload resource="classpath:codeTransformation.dwl"/>
+
         </dw:transform-message>
         <ws:consumer config-ref="Web_Service_Consumer" operation="findFlight" doc:name="Web Service Consumer"/>
 
         <dw:transform-message doc:name="Transform Message" metadata:id="33d29fd1-788d-4651-ac2e-cffdc7905262">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/json
-%namespace ns0 http://soap.training.mulesoft.com/
----
-payload.ns0#findFlightResponse.*return map ((return , indexOfReturn) -> {
-	airline: return.airlineName,
-	flightCode: return.code,
-	fromAirportCode: return.origin,
-	toAirportCode: return.destination,
-	departureDate: return.departureDate,
-	emptySeats: return.emptySeats,
-	price: return.price,
-	planeType: return.planeType
-})]]></dw:set-payload>
+            <dw:input-payload doc:sample="sample_data\findFlightResponse.xml"/>
+            <dw:set-payload resource="classpath:deltaCodeTransformation.dwl"/>
+
         </dw:transform-message>
         <logger level="INFO" doc:name="Logger"/>
     </flow>
