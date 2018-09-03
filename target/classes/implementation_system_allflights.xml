@@ -8,24 +8,11 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
-    <flow name="getDeltaFlightsFlow">
+    <flow name="get:/deltaFlights">
         <ws:consumer config-ref="Web_Service_Consumer" operation="listAllFlights" doc:name="Flights SOAP Request"/>
         <dw:transform-message doc:name="Transform Message" >
             <dw:input-payload doc:sample="sample_data\listAllFlightsResponse_1.xml"/>
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/json
-%namespace ns0 http://soap.training.mulesoft.com/
----
-payload.ns0#listAllFlightsResponse.*return map ((return , indexOfReturn) -> {
-	airline: return.airlineName,
-	flightCode: return.code,
-	fromAirportCode: return.origin,
-	toAirportCode: return.destination,
-	departureDate: return.departureDate,
-	emptySeats: return.emptySeats,
-	price: return.price,
-	planeType: return.planeType
-})]]></dw:set-payload>
+            <dw:set-payload resource="classpath:deltaFlightsTransformation.dwl"/>
         </dw:transform-message>
         <logger level="INFO" doc:name="Logger" message="#[payload]"/>
     </flow>
